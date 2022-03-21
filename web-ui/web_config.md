@@ -28,3 +28,30 @@ Enable cgi mode
  ```bash
 	sudo /etc/init.d/apache2  restart
  ```
+
+# 2. Manual guide for WebUI 
+Login with your E300 Box IP's address 
+
+Example : http://192.168.2.127/
+Default username/password: root/123456890
+![Test Image 1](mdimage/login.png)
+
+
+
+Monitoring and changing vccInt/vccHBM of FPGA
+=>click FPGA menu
+![Test Image 2](mdimage/fpga.png)
+
+Reset Voltage of FPGA by default
+=>click "Reset" menu
+![Test Image 3](mdimage/reset.png)
+
+
+Changing Network configuration
+=>Click "Ip setting" menu
+![Test Image 4](mdimage/ipsetting.png)
+
+Changing login password
+=>Click "password" menu
+![Test Image 5](mdimage/password.png)
+

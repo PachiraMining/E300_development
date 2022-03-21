@@ -1,0 +1,245 @@
+<html xmlns="http://www.w3.org/1999/xhtml" >
+	<head>
+		<title>IP Setting</title>
+
+		<script>
+
+		$(function() 
+        {
+               get_network_info();
+        });
+
+	    function ValidateIPaddress(inputText)
+	    {	
+	    	if (inputText.value.length == 0)
+	    	{
+	    		return true;
+	    	}
+
+	        var ipformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+	        var tokens = inputText.value.split(".");
+
+	        if(inputText.value.match(ipformat) || inputText.value.length == 0)
+	        {
+	            if(isNaN(tokens[0]) || isNaN(tokens[1]) || isNaN(tokens[2]) || isNaN(tokens[3]))
+	            {   
+	                inputText.value = "";
+	                alert("Invalid IP");                     
+	                return;
+	            }
+	            return true;
+	        }
+
+	        alert("You have entered an invalid address!");
+	        inputText.value = "";
+	        return false;
+	    }
+
+	    function set_network() 
+        {
+
+        if (document.getElementById("input_protocol").value == 1)
+        {
+        	if (document.getElementById("input_ipaddress").value.length < 5)
+        	{
+        		alert ("Please enter valid IP address");
+        		return;
+        	}
+        	else if (document.getElementById("input_subnet").value.length < 5)
+        	{
+        		alert ("Please enter valid subnet mask address");
+        		return;
+        	}
+        	else if (document.getElementById("input_gateway").value.length < 5)
+        	{
+         		alert ("Please enter valid gateway address");
+        		return;       		
+        	}
+        	else if (document.getElementById("input_dns").value.length < 5)
+        	{
+        		document.getElementById("input_dns").value = document.getElementById("input_gateway").value;
+        	}
+        }
+
+			if(!confirm("Your box wil be rebooted after changing network, do you want to apply?"))
+			{	
+				loadpage("ipsetting.html");
+				return;
+			}
+			
+
+
+        $.ajax(
+        {
+            type: "POST",
+            url: "/cgi-bin/qcmap_web_cgi.cgi",
+            data:
+            {
+                Page: "setDracaenaNetwork",
+                dhcp_mode:document.getElementById("input_protocol").value,
+                ipaddress:document.getElementById("input_ipaddress").value,
+                subnet:document.getElementById("input_subnet").value,
+                gateway:document.getElementById("input_gateway").value ,
+                dns:document.getElementById("input_dns").value ,
+                token:0,
+            },
+            dataType: "text",
+            success: function(msgs)
+            {   
+            	 loadpage("index.html");
+                if(msgs.length > 0)
+                {   
+                	
+                     obj = jQuery.parseJSON(msgs);
+                    if (obj.result == "SUCCESS")
+                    {   
+ 					    loadpage('ipsetting.html'); 
+                    }
+                    else
+                    {
+                        alert("CAN NOT GET NETWORK INFORMATION \n");
+                    }
+                    loadpage('ipsetting.html'); 
+
+                }
+                else
+                    alert("No Reply from server.");
+            },
+            error: function(xhr, textStatus, errorThrown)
+            {
+                //alert("fail")
+            }
+        }); 
+        }
+
+
+        function get_network_info() 
+        {
+        $.ajax(
+        {
+            type: "POST",
+            url: "/cgi-bin/qcmap_web_cgi.cgi",
+            data:
+            {
+                Page: "getDracaenaNetworkinfo",
+
+            },
+            dataType: "text",
+            success: function(msgs)
+            {   
+
+                if(msgs.length > 0)
+                {  
+                      obj = jQuery.parseJSON(msgs);
+                    if (obj.result == "SUCCESS")
+                    {   
+                        if (obj.dhcp_mode == 0)
+                        {
+                        	document.getElementById("div_dhcp_protocol").style.display = "none";
+                        }
+                        else
+                        {
+                        	 document.getElementById("div_dhcp_protocol").style.display = "block";
+                        	 document.getElementById("input_protocol").value = 1 ;
+                        	 document.getElementById("input_ipaddress").value = obj.ipaddress ;
+                        	 document.getElementById("input_subnet").value = obj.subnet ;
+                        	 document.getElementById("input_gateway").value = obj.gateway ;
+                        	 document.getElementById("input_dns").value = obj.dns ;
+                        }
+                    }
+                    else
+                    {
+                        alert("CAN NOT GET NETWORK INFORMATION \n");
+                    }
+                    
+
+                }
+                else
+                    alert("No Reply from server.");
+            },
+            error: function(xhr, textStatus, errorThrown)
+            {
+                //alert("fail")
+            }
+        }); 
+        }
+        
+ 		function show_protoco (input) 
+ 		{
+ 			if (input.value == 0)
+ 			{
+ 			    document.getElementById("div_dhcp_protocol").style.display = "none";
+ 			}
+ 			else
+ 			{
+ 				document.getElementById("div_dhcp_protocol").style.display = "block";
+ 			}
+ 		}
+		</script>
+
+	</head>
+	<body  align="left" valign="left">
+	    <table><tr  ><td class="h1">IP Setting</td></tr></table  ><br>
+
+	        <table  cellpadding="10px">
+		        <tr>
+		            <td class="Td_Name" style="width:200px;">Network Information</td> 
+		            <td width="90px" align="center">:</td>         
+		            <td class="Td_Value">
+		            </td>
+	       		</tr>
+
+	       	    <tr>
+					<td class="Td_Name" style="width:200px;"> Protocol</td> 
+					<td width="90px" align="center">:</td>         
+					<td class="Td_Value">
+					<select  id="input_protocol"  onchange="show_protoco(this)">
+					<option value="0" selected>dhcp</option>
+					<option value="1">static</option>
+					</select>
+					</td>
+        		</tr>
+            </table>
+
+            <div id="div_dhcp_protocol" style="display : none">
+	        <table  cellpadding="10px">
+		        <tr>
+		            <td class="Td_Name" style="width:200px;">IP Address</td> 
+		            <td width="90px" align="center">:</td>         
+		            <td class="Td_Value">
+		            <input id="input_ipaddress" type="text" onchange="ValidateIPaddress(this)">
+		            </td>
+	       		</tr>
+
+	       		<tr>
+		            <td class="Td_Name" style="width:200px;">Subnet mask</td> 
+		            <td width="90px" align="center">:</td>         
+		            <td class="Td_Value">
+		            <input id="input_subnet" type="text" onchange="ValidateIPaddress(this)">
+		            </td>
+	       		</tr>
+
+		        <tr>
+		            <td class="Td_Name" style="width:200px;">Gateway</td> 
+		            <td width="90px" align="center">:</td>         
+		            <td class="Td_Value">
+		            <input id="input_gateway" type="text" onchange="ValidateIPaddress(this)">
+		            </td>
+	       		</tr>
+
+	       		<tr>
+		            <td class="Td_Name" style="width:200px;">DNS Server</td> 
+		            <td width="90px" align="center">:</td>         
+		            <td class="Td_Value">
+		            <input id="input_dns" type="text" onchange="ValidateIPaddress(this)">
+		            </td>
+	       		</tr>
+            </table>            	
+            </div>
+        
+            <br><br>
+            <center>
+            <input type="button" value="Apply" onclick="set_network()">
+            </center>
+	</body>
+</html>

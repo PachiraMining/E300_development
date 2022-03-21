@@ -1,0 +1,367 @@
+<html>
+   <head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+<script>
+
+    var file_name_fw = "";
+
+// $(document).ready(function () 
+// {
+    var fileCatcher = document.getElementById('file-catcher');
+    var fileInput = document.getElementById('file-input');
+    var fileListDisplay = document.getElementById('file-list-display');
+    var fileList = [];
+    var renderFileList, sendFile;
+  
+    fileCatcher.addEventListener('submit', function (evnt) 
+    {   
+        var input_lengh = document.getElementById('file-input').value.length;
+
+        file_name_fw = document.getElementById('file-input').value.replace(/^.*[\\\/]/, '')
+
+        if(input_lengh == 0)
+        {
+            alert("Please choose firmware file");
+            return;
+        }
+        else if (input_lengh > 128)
+        {
+            alert("Filename is too long. Please rename firmware file");
+            return;
+        }
+        else
+        {
+
+        }
+
+        // if (confirm("Are !") )
+        // {   
+            document.getElementById("progress").style.display = "block";
+            evnt.preventDefault();
+            fileList.forEach(function (file) 
+            {
+                sendFile(file);
+            });
+        //}
+    }   
+    );
+  
+    fileInput.addEventListener('change', function (evnt) 
+    {
+        fileList = [];
+        for (var i = 0; i < fileInput.files.length; i++) 
+        {   
+            fileList.push(fileInput.files[i]);
+            
+        }
+        renderFileList();
+    });
+  
+    renderFileList = function () 
+    {
+        fileListDisplay.innerHTML = '';
+        fileList.forEach(function (file, index) 
+        {
+            var fileDisplayEl = document.createElement('p');
+            fileDisplayEl.innerHTML = (index + 1) + ': ' + file.name;
+            fileListDisplay.appendChild(fileDisplayEl);
+        });
+    };
+  
+    sendFile = function (file) 
+    {   
+        var formData = new FormData();
+        var request = new XMLHttpRequest();
+        var progressBar = document.getElementById("progress");
+        var display = document.getElementById("display");
+
+        formData.set('file', file, 'upgrade' + " " + file.name);
+        request.open("POST", "/cgi-bin/qcmap_web_cgi.cgi");
+
+        request.upload.onprogress = function (e) 
+        {
+            if (e.lengthComputable) 
+            {
+                progressBar.max = e.total;
+                progressBar.value = e.loaded;
+                display.innerText = Math.floor((e.loaded / e.total) * 100) + '%';
+            }
+        }
+
+        request.upload.onloadstart = function (e) 
+        {
+            progressBar.value = 0;
+            display.innerText = '0%';
+        }
+
+        request.upload.onloadend = function (e) 
+        {
+            progressBar.value = e.loaded;
+        }
+
+        request.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) 
+        {
+
+            if(this.responseText.includes("\"downgrade\":\"0\""))
+            {
+                if(confirm("UPLOAD FILE SUCCESS"))
+                {  
+                    dracaenaUploadFimrware();
+                }
+            }
+        }};
+
+        request.send(formData);
+    };
+          
+
+//} );
+
+    var file_name_fw = "";
+
+// $(document).ready(function () 
+// {
+    var fileCatcherBit = document.getElementById('file-catcher-bit');
+    var fileInputBit = document.getElementById('file-input-bit');
+    var fileListDisplayBit = document.getElementById('file-list-display-bit');
+    var fileListBit = [];
+    var renderFileListBit, sendFileBit;
+  
+    fileCatcherBit.addEventListener('submit', function (evnt) 
+    {   
+        var input_lengh = document.getElementById('file-input-bit').value.length;
+
+        file_name_fw = document.getElementById('file-input-bit').value.replace(/^.*[\\\/]/, '')
+
+        if(input_lengh == 0)
+        {
+            alert("Please choose bitstream file");
+            return;
+        }
+        else if (input_lengh > 128)
+        {
+            alert("Filename is too long. Please rename firmware file");
+            return;
+        }
+        else
+        {
+
+        }
+
+        // if (confirm("The update process takes about 3 minutes to complete. After that your device will reboot!") )
+        // {   
+            document.getElementById("progress").style.display = "block";
+            evnt.preventDefault();
+            fileListBit.forEach(function (file) 
+            {
+                sendFileBit(file);
+            });
+        //}
+    }   
+    );
+  
+    fileInputBit.addEventListener('change', function (evnt) 
+    {
+        fileListBit = [];
+        for (var i = 0; i < fileInputBit.files.length; i++) 
+        {   
+            fileListBit.push(fileInputBit.files[i]);
+            
+        }
+        renderFileListBit();
+    });
+  
+    renderFileListBit = function () 
+    {
+        fileListDisplayBit.innerHTML = '';
+        fileListBit.forEach(function (file, index) 
+        {
+            var fileDisplayEl = document.createElement('p');
+            fileDisplayEl.innerHTML = (index + 1) + ': ' + file.name;
+            fileListDisplayBit.appendChild(fileDisplayEl);
+        });
+    };
+  
+    sendFileBit = function (file) 
+    {   
+        var formData = new FormData();
+        var request = new XMLHttpRequest();
+        var progressBar = document.getElementById("progress-bit");
+        var display = document.getElementById("display-bit");
+
+        formData.set('file', file, 'upgrade' + " " + file.name);
+        request.open("POST", "/cgi-bin/qcmap_web_cgi.cgi");
+
+        request.upload.onprogress = function (e) 
+        {
+            if (e.lengthComputable) 
+            {
+                progressBar.max = e.total;
+                progressBar.value = e.loaded;
+                display.innerText = Math.floor((e.loaded / e.total) * 100) + '%';
+            }
+        }
+
+        request.upload.onloadstart = function (e) 
+        {
+            progressBar.value = 0;
+            display.innerText = '0%';
+        }
+
+        request.upload.onloadend = function (e) 
+        {
+            progressBar.value = e.loaded;
+        }
+
+        request.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) 
+        {
+
+            if(this.responseText.includes("\"downgrade\":\"0\""))
+            {
+                if(confirm("UPLOAD BITSTREAM FILE SUCCESS"))
+                {  
+                    dracaenaUploadBit();
+                }
+            }
+        }};
+
+        request.send(formData);
+    };
+
+function dracaenaUploadBit()
+{
+        $.ajax(
+        {
+            type: "POST",
+            url: "/cgi-bin/qcmap_web_cgi.cgi",
+            data:
+            {
+                Page: "dracaUploadBit",
+                file_name :  file_name_fw,
+            },
+            dataType: "text",
+            success: function(msgs)
+            {
+                if(msgs.length > 0)
+                {
+                    // var obj = jQuery.parseJSON(msgs);
+                    // if(obj.result == "AUTH_FAIL")
+                    // {
+                    //     document.getElementById("div_menu_content").style.display = "none";
+                    //     loadpage('login.html');
+                    //     alert("Device is being configured by a different IP: relogin");
+                    //     return;
+                    // }
+                    // if(obj.result == "Token_mismatch")
+                    // {
+                    //     document.getElementById("div_menu_content").style.display = "none";
+                    //     loadpage('login.html');
+                    //     alert("Unauthorised request: relogin");
+                    //     return;
+                    // }
+
+                    alert("UP LOAD BIT SUCCESS");
+                }
+                else
+                {
+                alert("No Reply from server."); 
+                }
+            },
+            error: function(xhr, textStatus, errorThrown)
+            {
+            }
+        }) 
+}
+
+function dracaenaUploadFimrware()
+{
+        $.ajax(
+        {
+            type: "POST",
+            url: "/cgi-bin/qcmap_web_cgi.cgi",
+            data:
+            {
+                Page: "dracaUploadFW",
+                file_name :  file_name_fw,
+            },
+            dataType: "text",
+            success: function(msgs)
+            {
+                if(msgs.length > 0)
+                {
+                    var obj = jQuery.parseJSON(msgs);
+                    if(obj.result == "AUTH_FAIL")
+                    {
+                        document.getElementById("div_menu_content").style.display = "none";
+                        loadpage('login.html');
+                        alert("Device is being configured by a different IP: relogin");
+                        return;
+                    }
+                    if(obj.result == "Token_mismatch")
+                    {
+                        document.getElementById("div_menu_content").style.display = "none";
+                        loadpage('login.html');
+                        alert("Unauthorised request: relogin");
+                        return;
+                    }
+
+                    alert("UP LOAD FIRMWARE SUCCESS");
+                }
+                else
+                {
+                alert("No Reply from server."); 
+                }
+            },
+            error: function(xhr, textStatus, errorThrown)
+            {
+            }
+        }) 
+}
+</script>
+
+</head>
+<body>
+<table><tr  ><td class="h1">Firmware Upgrade</td></tr></table  >
+<table cellpadding="10px">  
+    <tr>
+        <td  >Choose a firmware file</td><td> </td><td>   </td>
+    </tr>
+</table>
+
+<progress id="progress" value="0" style="width: 70%;height: 20px;display: block;"></progress><span id="display"></span>
+  
+<form id='file-catcher'>
+    <br>  
+    <input id='file-input' type='file' >
+    <div id='file-list-display'></div>
+    <center>
+    <button class="submitUp" id="submitUp"  type='submit'>Upgrade Firmware</button>
+    </center>
+</form>
+
+
+
+<table><tr  ><td class="h1">Bitstream Upgrade</td></tr></table  >
+<table cellpadding="10px">  
+    <tr>
+        <td  >Choose a bitstream file</td><td> </td><td>   </td>
+    </tr>
+</table>
+
+<progress id="progress-bit" value="0" style="width: 70%;height: 20px;display: block;"></progress><span id="display-bit"></span>
+  
+<form id='file-catcher-bit'>
+    <br>  
+    <input id='file-input-bit' type='file' >
+    <div id='file-list-display-bit'></div>
+    <center>
+    <button class="submitUp" id="submitUpBit"  type='submit'>Upgrade Bitstream</button>
+    </center>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,297 @@
+<html lang="en">
+	<head>
+		<title>Login Web Page</title>
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <link rel="stylesheet" href="js/jquery-ui.css"/>
+        <script type="text/javascript" src="js/jquery-ui.js"></script> 
+        
+		<link rel="stylesheet" href='stylemain.css' type='text/css'>  
+    	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    	<meta http-equiv="Pragma" content="no-cache" />
+   	    <meta http-equiv="Expires" content="0" />
+		<script>
+		var Min_PWD_Ln =8;
+		var Max_PWD_Ln =15;
+		var timeout_update;
+
+		    $(document).ready(function () 
+            { 
+                document.getElementById("div_menu_content").style.display = "none";
+
+            })
+
+			function disable_login()
+			{
+				$("#BTN_Login").attr('disabled', 'disabled');
+				alert (" Login disabled: Please wait 3 minutes then re-login !!");
+				var countdown = setInterval(function ()
+				{
+					clearInterval(countdown);
+					$("#BTN_Login").removeAttr("disabled");
+					$.ajax(
+					{
+						type: "POST",
+						url: "/cgi-bin/qcmap_auth.cgi",
+						data:
+						{
+							type: "count_attempt",
+							mask: "2"
+						},
+						dataType: "text",
+						success: function(msgs)
+						{
+						if(msgs.length > 0)
+						{
+							var obj = jQuery.parseJSON(msgs);
+							if(obj.result== 8 || obj.result== 9 || obj.result== 10 || obj.result== 11 || obj.result== 12 || obj.result== 13)
+							{
+								loadpage('login.html');
+								//alert("Device went to a bad state..please re-login!!");
+								Session_inactivity_timeout =5;
+								return;
+							}
+						}
+						else
+							alert("No Reply from server.");
+						},
+						error: function(xhr, textStatus, errorThrown)
+						{
+							//alert("FAIL: " + xhr + " " + textStatus + " " + errorThrown);
+						}
+					});
+					// Run interval for 900s (15min)
+				}, 900000);
+			}
+			function login()
+			{  
+				if(document.getElementById("LOGIN_USER").value.length == 0  || document.getElementById("LOGIN_PWD").value.length == 0 )
+				{
+					alert("Password and username can not empty!");
+					return ;
+				}
+
+				oldPassword   = $("#LOGIN_PWD").val();
+				$.ajax(
+				{
+					type: "POST",
+					url: "/cgi-bin/qcmap_auth.cgi",
+					data:
+					{
+						type: "login",
+						pwd : $("#LOGIN_PWD").val(),
+						timeout : 300,
+						user : $("#LOGIN_USER").val()
+					},
+					dataType: "text",
+					success: function(msgs)
+					{
+						if(msgs.length > 0)
+						{
+							var obj = jQuery.parseJSON(msgs);
+								if (obj.result == 0 || obj.result == 1)
+								{
+									document.getElementById("div_menu_content").style.display = "block";
+									click_submenu(5);
+									document.getElementById("login_page").style.visibility="hidden";
+									//document.getElementById("Main_Table").style.visibility="hidden";
+									$('#Content').load('dashboard.html');
+									Session_inactivity_timeout = 5;//obj.timeout/60;
+									session_token = obj.token;
+									localStorage.setItem('LOCAL_TOKEN', session_token);
+								}
+/*								else if(obj.result == 1)
+								{
+									loadpage('login.html');
+									alert("Device is being configured by IP: " + obj.ip + " . Please try after some time.");
+									//hide_menu();
+									window.close();
+								}*/
+								else if(obj.result == 2)
+								{
+									session_token = obj.token;
+									localStorage.setItem('LOCAL_TOKEN', session_token);
+									Session_inactivity_timeout = 5;//obj.timeout/60;
+									alert("First time Login: Please update password");
+								}
+								else if(obj.result == 3)
+								{
+									loadpage('login.html');
+									alert("Login fail: enter correct password");
+								}
+								else if(obj.result== 8 || obj.result== 9 || obj.result== 10 || obj.result== 11 || obj.result== 12 || obj.result== 13)
+								{
+									loadpage('login.html');
+									//alert("Device went to a bad state..please re-login!!");
+									Session_inactivity_timeout = 5;
+									return;
+								}
+								else if(obj.result == 7)
+								{
+									loadpage('login.html');
+									alert("Login fail: enter correct username");
+								} else {
+									// loadpage('dashboard.html');
+									$('#Content').load('dashboard.html');
+								}
+						}
+						else
+							alert("No Reply from server.");
+					},
+					error: function(xhr, textStatus, errorThrown)
+					{
+						//alert("FAIL: " + xhr + " " + textStatus + " " + errorThrown);
+					}
+				});
+			}
+			function ValidateUSER( Me)
+			{
+
+				var str1 = Me.value;
+				var str2 = 'admin';
+				if(str1 == str2)
+				{
+					$("#BTN_Login").removeAttr("disabled");
+				}
+				else
+				{
+					$("#BTN_Login").attr('disabled', 'disabled');
+				}
+			}
+              
+
+             document.onkeydown=function(evt)
+             {   
+             var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;        if(keyCode == 13)        {            //your function call here        
+              }    
+              }
+
+		var input = document.getElementById("LOGIN_PWD");
+		input.addEventListener("keyup", function(event) {
+		    event.preventDefault();
+		    if (event.keyCode === 13) {
+		        document.getElementById("BTN_Login").click();
+		    }
+		});
+
+		var admin = document.getElementById("LOGIN_USER");
+		admin.addEventListener("keyup", function(event) {
+		    event.preventDefault();
+		    if (event.keyCode === 13) {
+		        document.getElementById("BTN_Login").click();
+		    }
+
+		});
+		</script>
+		<style type="text/css">
+        <!--
+			body {
+            	font-family: Arial,sans-serief;
+            	background-color: #ffffff;
+            	margin: 0px;
+            	padding: 0px;
+            	align-content: left;
+            }
+            div.loginBox {
+            	display: block;
+            	position: relative;
+            	margin-top: 10%;
+            	text-align: center;
+            	margin-left: -356px;
+            }
+            .noteDiv {
+            	color: gray;
+            	font-family: Arial;
+            	width: 395px;
+            	text-align: left;
+            	margin: 0px auto;
+            	font-size: 14px;
+            }
+            div.panelThre
+            {
+            	margin-top:10px;
+            }
+            div.picDiv {
+            	width: 395px;
+            	height: 276px;
+            	background: url(image/login_bg2.gif);
+            	position: relative;
+            }
+            input.pcPassword {
+            	width: 300px;
+            	height: 50px;
+            	line-height: 50px;
+            	padding-left: 20px;
+            }
+            ul {
+            	padding: 60px 0px 0px 0px;
+            	margin: 0px;
+            	list-style: none;
+            }
+            ul li {
+            	height: 34px;
+            	width: 222px;
+            }
+            li.unLi {
+            	background: url(image/login_idunselect.gif);
+            	margin-left: 90px;
+            }
+            li.pwLi {
+            	background: url(image/login_pwunselect.gif);
+            	margin-left: 90px;
+            }
+            li.blank {
+            	height: 15px;
+            }
+            input.loginBtn {
+            	height: 34px;
+            	display: inline-block;
+            	width: 113px;
+            	border: 0px;
+            	margin-top: 30px;
+            	background: url(image/login.gif);
+            	cursor: pointer;
+            }
+            input.text {
+            	border: 0px;
+            	height: 26px;
+            	line-height: 26px;
+            	width: 175px;
+            	padding: 0px;
+            	margin: 4px 0px 0px 30px;
+            	font-size: 14px;
+            	color: #6a6969;
+            	font-family: Verdana,Arial;
+            	font-weight: regular;
+            	outline: none; /* For chrome textbox border */
+            }
+			-->
+		</style>
+	</head>
+	<body >
+		<center><table id="Main_Table" width="450px">
+		<div id="login_page" class="loginBox" style="padding-left: 125px">
+	       <div class="noteDiv">
+		        <span id="note"></span>
+		        <span id="tip"></span>
+	        </div>
+
+	        <div class="panelThre" align="center">
+	        <center>
+	        	<div class="picDiv">
+	        		<ul id="ulNode">
+	        			<li id="unLi" class="unLi"><input class="text" id="LOGIN_USER" value="root" type="input" maxlength="15"/></li>
+	        			<li class="blank"></li>
+	        			<li id="pwLi" class="pwLi"><input class="text" id="LOGIN_PWD" type="password" maxlength="15"/></li>
+	        			<li class="blank"></li>
+	        		</ul>
+	        		<input type="button" id="BTN_Login" value="Login" style="width: 113px; height: 34px; padding: 10px 30px 10px 30px;" onclick="login();"/>
+	        		<div style="font-size: 10px; margin-top: 20px;">
+	        			<label id="copyright" >Copyright &copy;2021 - Dracaena</label>
+	        		</div>
+	        	</div>
+	        </center>
+	        </div>
+        </div>
+		</table></center>
+	</body>
+</html>
