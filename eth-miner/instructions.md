@@ -18,13 +18,14 @@ There are two options for run miner
 
 Option 1: Run miner by command line
 ```bash
-	sudo  ./ethminer --fpga -a 530 -b 312 -c 125 -q 100 -e 4 -f -d 60  -P stratum1+tcp://0x2784685ba4a940406b185f945c26104d64f7562e.vu35p@eth-na.f2pool.com:6688 
+	sudo  ./ethminer --fpga -a 530 -b 312 -c 125 -q 100 -e 4 -f -d 60  -P stratum1+tcp://0x2784685ba4a940406b185f945c26104d64f7562e.vu35p@eth-na.f2pool.com:6688  ---ip 192.168.1.62
 ```
 _Note_ 
  
  ` -e 1 : Mode auto-tunning mode (Miner will find the best frequency and run it)`
 
- ` -e 4 : Mode manual  (Miner will receive input clock parameters from command line `
+ ` -e 4 : Mode manual  (Miner will receive input clock parameters from command line 
+ ` --ip : Your e300 box IP address
 
 
 Option 2: Run miner by script
