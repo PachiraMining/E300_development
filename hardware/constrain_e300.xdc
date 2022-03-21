@@ -1,3 +1,10 @@
+##########################################################################
+## FPGA information
+## Product family: Virtex UltraScale+ HBM
+## Part number: xcvu35p_CIV-fsvh2104-2-e
+## Please use Vivado/Vivado Lab 2020.2.2 or newer version and install Virtex UltraScale+ HBM Device package.
+##########################################################################
+
 
 set_property CONFIG_VOLTAGE 1.8 [current_design]
 #
