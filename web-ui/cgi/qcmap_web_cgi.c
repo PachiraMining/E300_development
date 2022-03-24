@@ -293,6 +293,47 @@ int recv_from_webcli(char *webcli_webcgi_buff,
                      int *webcli_webcgi_buff_size,
                      int *webcli_sockfd);
 
+
+ 
+int get_update_status(char *all_fw_info)
+{
+	FILE *p_fHandle = NULL;
+    char lineBuffer[2048];
+    char *sub;
+    int  rc = -1;
+    int result = 0;
+
+   // p_fHandle = popen("curl --header \"Content-Type: application/json\" --request GET http://192.168.1.16:8200/controller/getVoltage", "r");
+    // curl --header "Content-Type: application/json" --request GET http://192.168.1.16:8200/getallInfo/
+    //-> {"firmwareVersion":"v.1.0.0","otaUpdateEnable":true}
+    memset(lineBuffer, 0, sizeof(lineBuffer));
+    sprintf(lineBuffer, "curl --header \"Content-Type: application/json\" --request GET http://localhost:8500/firmware/getOtaUpdate");
+    p_fHandle = popen(lineBuffer, "r");
+
+     if (p_fHandle != NULL)
+    {
+        memset(lineBuffer, 0, sizeof lineBuffer);
+        rc = fread(lineBuffer, 1, sizeof lineBuffer, p_fHandle);
+        if(rc > 0)
+        {
+            if (strstr(lineBuffer, "otaUpdateEnable"))
+            {	
+            	strcpy(all_fw_info, lineBuffer);
+            	result = 1;
+            }
+          
+        }
+
+        strcpy(all_fw_info, lineBuffer);
+   
+
+
+        pclose(p_fHandle);
+    }
+
+    return result;
+}
+
  int curl_get_all_info(char *box_info)
  {
      FILE *p_fHandle = NULL;
@@ -315,12 +356,15 @@ int recv_from_webcli(char *webcli_webcgi_buff,
         rc = fread(lineBuffer, 1, sizeof lineBuffer, p_fHandle);
         if(rc > 0)
         {
-            sub = strstr(lineBuffer, "FPGA");
-          //  printf("%s\n", sub);
-            result = 1;
+            if (strstr(lineBuffer, "FPGA"))
+            {
+             strcpy(box_info, lineBuffer);
+             result = 1;
+            }
+            
         }
 
-        strcpy(box_info, lineBuffer);
+       
    
 
 
@@ -530,6 +574,9 @@ int main(void)
 							strcpy(action, p_action);
 							strcpy(writeFile, writeFileTmp + strlen(action) + 1);
 
+							memset(writeFile, 0, sizeof(writeFile));
+							strcpy(writeFile, "zynq_firmware.tar");
+
 							snprintf(lengthDebug, sizeof lengthDebug, "%s%s", UPDATE_FILE_PATH, writeFile);
 							fileFd = fopen(lengthDebug, "w+");
 							if (fileFd != NULL)
@@ -549,17 +596,24 @@ int main(void)
 
 							    fclose(fileFd);
 
-							    if (strcmp(action, "upgrade") == 0)
-							    {
-							    }
-							    else if (strcmp(action, "upgradebit") == 0)
-							    {   
-							    }
-
 							    free((void *)html_cgi_buff);
-							    printf("%s%d\n\n", HTTP_RESPONCE_HEADER,UPLOAD_FILE_SUCCESS_LEN);
-							    printf("%s", UPLOAD_FILE_SUCCESS);
-							  return SUCCESS;
+
+
+							    memset(responce, 0, sizeof(responce));
+							    sprintf(responce,"curl --header \"Content-Type: application/json\" --request POST --data \'{\"pathFile\":\"%s\"}\' http://localhost:8500/firmware/startUpdate",  writeFile);
+							    //system(responce);
+							    fileFd = popen(responce, "r");
+							    if (fileFd)
+							    {
+							    	pclose(fileFd);
+							    }
+							    
+						    	memset(responce, 0, sizeof(responce));
+				  				sprintf(responce,"{\"page\":\"getDracaenaManualUpdate\", \"filename\":%s, \"result\":\"SUCCESS\",\"status\":\"SUCCESS\"}", writeFile);	
+
+				  				printf("%s%d\n\n", HTTP_RESPONCE_HEADER,strlen(responce));
+								printf("%s", responce);
+								return SUCCESS;	
 							}
 						}
 					}
@@ -596,6 +650,61 @@ int main(void)
 					printf("%s", respone_ip);
 					return SUCCESS;				
 				}
+
+
+				else if (strstr(html_cgi_buff, "setDracaenaEnableDisableOTA" ))
+				{
+					 int enable = 0;
+
+					 if (strstr(html_cgi_buff,"set_enable_disable_ota=1"))
+					 	enable = 1;
+
+					 free((void *)html_cgi_buff);
+
+					 memset(responce, 0, sizeof(responce));
+					 sprintf(responce, "    curl --header \"Content-Type: application/json\" --request POST --data \' {\"otaUpdateEnable\":%d}\' http://localhost:8500/firmware/setOtaUpdate", enable);
+					    fileFd = popen(responce, "r");
+							    if (fileFd)
+							    {
+							    	pclose(fileFd);
+							    }
+
+					memset(responce, 0, sizeof(responce));
+					sprintf(responce,"{\"page\":\"setDracaenaEnableDisableOTA\", \"result\":\"SUCCESS\"}");	
+
+					printf("%s%d\n\n", HTTP_RESPONCE_HEADER,strlen(responce));
+					printf("%s", responce);
+					return SUCCESS;	
+ 							
+				}
+
+				else if (strstr(html_cgi_buff, "getDracaenaFirmwareStatus" ))
+				{
+					free((void *)html_cgi_buff);
+ 					char all_fw_info[256];
+ 					memset(all_fw_info, 0, sizeof(all_fw_info));
+ 					// strcpy(all_fw_info, "{\"firmwareVersion\":\"v.1.0.0\",\"otaUpdateEnable\":1}");
+
+
+					//if (get_update_status(all_fw_info))
+					if (get_update_status(all_fw_info))
+					{
+					  	memset(responce, 0, sizeof(responce));
+					  	sprintf(responce,"{\"page\":\"getDracaenaFirmwareStatus\", \"autoupdate\":%s, \"result\":\"SUCCESS\"}", all_fw_info);						
+					}
+					else
+				    {
+						memset(responce, 0, sizeof(responce));
+						strcpy(responce,"{\"page\":\"getDracaenaFirmwareStatus\", \"result\":\"FAIL\"}");				    	
+				    }
+
+
+
+					printf("%s%d\n\n", HTTP_RESPONCE_HEADER,strlen(responce));
+					printf("%s", responce);
+					return SUCCESS;				
+				}
+
 
 				else if (strstr(html_cgi_buff, "getDracaenaNetworkinfo"))
 				{

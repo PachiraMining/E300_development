@@ -6,6 +6,105 @@
 <script>
 
     var file_name_fw = "";
+    var obj;
+    var old_ota_enable = 0;
+
+    $(function() 
+    {
+         get_firmare_status();
+    });
+
+    function checkcheckbox(input)
+    {   
+        if (old_ota_enable == 1)
+        {
+             if(document.getElementById("enable_upate_ota").checked == true)
+            {
+                document.getElementById("manualupdate").style.display = "none";
+                document.getElementById("div_show_apply").style.display = "block";
+
+            }
+            else
+            {
+               document.getElementById("manualupdate").style.display = "none";
+               document.getElementById("div_show_apply").style.display = "block";
+
+            }           
+        }
+        else 
+        {
+            if(document.getElementById("enable_upate_ota").checked == true)
+            {
+                document.getElementById("manualupdate").style.display = "none";
+                document.getElementById("div_show_apply").style.display = "block";
+
+            }
+            else
+            {
+               document.getElementById("manualupdate").style.display = "block";
+               document.getElementById("div_show_apply").style.display = "none";
+            }            
+        }
+
+    }
+
+    function get_firmare_status( ) 
+    {
+        $.ajax(
+        {
+            type: "POST",
+            url: "/cgi-bin/qcmap_web_cgi.cgi",
+            data:
+            {
+                Page: "getDracaenaFirmwareStatus",
+                token:0,
+            },
+            dataType: "text",
+            success: function(msgs)
+            {   
+                
+                if(msgs.length > 0)
+                {   
+                    
+                     obj = jQuery.parseJSON(msgs);
+                    // alert(obj.autoupdate.firmwareVersion);
+                     document.getElementById("current_Fw").value = obj.autoupdate.firmwareVersion;
+                    
+                    if (obj.result == "SUCCESS")
+                    {   
+                       // $("#").text(obj.box_info_all.curentFanLevel)
+
+                        old_ota_enable = obj.autoupdate.otaUpdateEnable ;
+                        //old_ota_enable = 1;
+                        if (old_ota_enable == 1 )
+                        {    
+                           // $("#CURRENT_VERSION_LABLE").text(obj.autoupdate.firmwareVersion);
+                           
+                           document.getElementById("enable_upate_ota").checked = true;
+                           document.getElementById("manualupdate").style.display = "none";
+
+                        }
+                        else
+                        {
+                           document.getElementById("enable_upate_ota").checked = false;
+                           document.getElementById("manualupdate").style.display = "block";
+                           document.getElementById("div_show_apply").style.display = "none";
+                           
+
+
+                        }
+                    } 
+
+                }
+                else
+                    alert("No Reply from server.");
+            },
+            error: function(xhr, textStatus, errorThrown)
+            {
+                //alert("fail")
+            }
+        }); 
+    }
 
 // $(document).ready(function () 
 // {
@@ -24,6 +123,7 @@
         if(input_lengh == 0)
         {
             alert("Please choose firmware file");
+            loadpage("upfirmware.html");
             return;
         }
         else if (input_lengh > 128)
@@ -105,12 +205,9 @@
         if (this.readyState == 4 && this.status == 200) 
         {
 
-            if(this.responseText.includes("\"downgrade\":\"0\""))
+            if(this.responseText.includes("\"result\":\"SUCCESS\""))
             {
-                if(confirm("UPLOAD FILE SUCCESS"))
-                {  
-                    dracaenaUploadFimrware();
-                }
+              alert("Upload file success, Please wait about one minute for sync");
             }
         }};
 
@@ -277,74 +374,108 @@ function dracaenaUploadBit()
         }) 
 }
 
-function dracaenaUploadFimrware()
-{
+function set_enable_disable_OTA()
+{       
+        var enable = 0;
+        if (document.getElementById("enable_upate_ota").checked == true)
+        {
+            enable = 1;
+        }
         $.ajax(
         {
             type: "POST",
             url: "/cgi-bin/qcmap_web_cgi.cgi",
             data:
             {
-                Page: "dracaUploadFW",
-                file_name :  file_name_fw,
+                Page: "setDracaenaEnableDisableOTA",
+                set_enable_disable_ota: enable,
+                token:0,
             },
             dataType: "text",
             success: function(msgs)
-            {
+            {   
+                 
                 if(msgs.length > 0)
-                {
-                    var obj = jQuery.parseJSON(msgs);
-                    if(obj.result == "AUTH_FAIL")
-                    {
-                        document.getElementById("div_menu_content").style.display = "none";
-                        loadpage('login.html');
-                        alert("Device is being configured by a different IP: relogin");
-                        return;
+                {   
+                    
+                     obj = jQuery.parseJSON(msgs);
+                    if (obj.result == "SUCCESS")
+                    {   
+                        alert('Apply success'); 
                     }
-                    if(obj.result == "Token_mismatch")
+                    else
                     {
-                        document.getElementById("div_menu_content").style.display = "none";
-                        loadpage('login.html');
-                        alert("Unauthorised request: relogin");
-                        return;
+                        alert(" Apply fail");
                     }
+                     loadpage('upfirmware.html'); 
 
-                    alert("UP LOAD FIRMWARE SUCCESS");
                 }
                 else
-                {
-                alert("No Reply from server."); 
-                }
+                    alert("No Reply from server.");
             },
             error: function(xhr, textStatus, errorThrown)
             {
+                //alert("fail")
             }
-        }) 
+        });  
 }
 </script>
 
 </head>
 <body>
 <table><tr  ><td class="h1">Firmware Upgrade</td></tr></table  >
+
+
+<table  cellpadding="10px">
+    <tr>
+<td class="Td_Name" style="width:200px;">Current Version</td> 
+<td width="90px" align="center">:</td>         
+    <td class="Td_Value"><input type="text" id="current_Fw" disabled></td>   
+</tr>
+
+<tr>
+<td class="Td_Name" style="width:200px;">Enable auto update firmware</td> 
+<td width="90px" align="center">:</td>         
+<td class="Td_Value">  <input type="checkbox" name="" id="enable_upate_ota" onclick="checkcheckbox(this)">
+</td>
+</tr>
+
+</table>
+ 
+
+<div style="display: none;" id="manualupdate">
+
 <table cellpadding="10px">  
     <tr>
         <td  >Choose a firmware file</td><td> </td><td>   </td>
     </tr>
 </table>
 
+<div style="display: none";>
 <progress id="progress" value="0" style="width: 70%;height: 20px;display: block;"></progress><span id="display"></span>
+</div>
   
 <form id='file-catcher'>
     <br>  
     <input id='file-input' type='file' >
     <div id='file-list-display'></div>
     <center>
-    <button class="submitUp" id="submitUp"  type='submit'>Upgrade Firmware</button>
+    <button class="submitUp" id="submitUp"  type='submit'>Manual upgrade firmware</button>
     </center>
 </form>
 
+</div>
+
+<div id="div_show_apply" style="display: block;">
+<br>
+<center>
+<input type="button" value="Enable/Disable OTA" onclick=" set_enable_disable_OTA()">
+</center>
+</div>
 
 
+
+<div id="update_bit" style="display:none">
 <table><tr  ><td class="h1">Bitstream Upgrade</td></tr></table  >
 <table cellpadding="10px">  
     <tr>
@@ -362,6 +493,7 @@ function dracaenaUploadFimrware()
     <button class="submitUp" id="submitUpBit"  type='submit'>Upgrade Bitstream</button>
     </center>
 </form>
+</div>
 
 </body>
 </html>

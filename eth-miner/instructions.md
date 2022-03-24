@@ -17,8 +17,8 @@ step 6: Right click "vu35p/xcu50..." => "Program device" => linking to bitstream
 There are two options for run miner
 
 Option 1: Run miner by command line
-```bash
-	sudo  ./ethminer --fpga -a 530 -b 312 -c 125 -q 100 -e 4 -f -d 60  -P stratum1+tcp://0x2784685ba4a940406b185f945c26104d64f7562e.vu35p@eth-na.f2pool.com:6688  --ip 192.168.1.62
+```ba
+	sudo  ./ethminer --fpga -a 510 -b 312 -c 125 -q 100 -e 4 -f -d 70  -P stratum1+tcp://0x2784685ba4a940406b185f945c26104d64f7562e.vu35p@eth-na.f2pool.com:6688  --ip 192.168.1.159
 ```
 _Note_ 
  
