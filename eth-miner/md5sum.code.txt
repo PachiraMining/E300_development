@@ -1,2 +1,1 @@
-f29502b59a1ecde6e2bd12d4c57fd3e6  ethminer
-1a1012e01e13968b5166d431ecda7689  miner_top.bit
+68144e8c9c647b84a99cd84ddc6e9200  ethminer
