@@ -25,8 +25,9 @@
     function getboxinfo()
     {
 
-        $("#title_td_vccInt_LABLE").text(" vccInt for all FPGAs in mV (600mV - 950mV");
-        $("#title_td_vccHBM_LABLE").text(" vccHBM for all FPGAs in mV (1000mV - 1300mV");   
+        $("#title_td_vccInt_LABLE").text(" vccInt for  FPGAs in mV (600mV - 950mV)");
+        $("#title_td_vccHBM_LABLE").text(" vccHBM for  FPGAs in mV (1000mV - 1300mV)"); 
+         $("#title_td_temp_LABLE").text(" Maximum temperature for shutdown  FPGAs in (°C) (60 - 95°C)");  
 
         $.ajax(
         {
@@ -66,21 +67,31 @@
                        var STATUS;
                        var VOLTAGE_INT;
                        var VOLTAGE_HBM;
+                       var LIMITED_TEMP;
                        var BOARDTEMP;
                        var CHIPTEMP;
                        var ENABLE;
                        var DeleButton;
                        var tmp;
+
+                       var offset_get = obj.box_info_all.FPGA[0].temp_i2c_addr;
+                       if (offset_get == "0x4e"   || offset_get == "0x4d")
+                       {
+                            document.getElementById("id_board_offset").value = offset_get;
+                       }
   
                        for(i=0; i < 3; i++)
                            {
                              row = USER_Table.insertRow(USER_Table.rows.length);
                              INDEX = row.insertCell(0);  
                              STATUS = row.insertCell(1);
+
                              VOLTAGE_INT = row.insertCell(2);
+
                              VOLTAGE_HBM = row.insertCell(3);
                              BOARDTEMP = row.insertCell(4);
                              CHIPTEMP = row.insertCell(5);
+                             LIMITED_TEMP = row.insertCell(6);
 
       
                              INDEX.innerHTML = obj.box_info_all.FPGA[i].boardId;
@@ -92,7 +103,8 @@
                                  VOLTAGE_INT.innerHTML= obj.box_info_all.FPGA[i].voltage_vccint;
                                  VOLTAGE_HBM.innerHTML = obj.box_info_all.FPGA[i].voltage_hbm;
                                  CHIPTEMP.innerHTML= obj.box_info_all.FPGA[i].chipTemp;  
-                                 BOARDTEMP.innerHTML = obj.box_info_all.FPGA[i].boardTemp;                               
+                                 BOARDTEMP.innerHTML = obj.box_info_all.FPGA[i].boardTemp;     
+                                 LIMITED_TEMP.innerHTML = obj.box_info_all.FPGA[i].tempMax;                           
                              }
                              else
                              {
@@ -102,6 +114,7 @@
                              VOLTAGE_HBM.innerHTML = "N/A"
                              CHIPTEMP.innerHTML= "N/A";
                              BOARDTEMP.innerHTML = "N/A";
+                             LIMITED_TEMP.innerHTML = obj.box_info_all.FPGA[i].tempMax;  
                              }
                             
 
@@ -115,6 +128,7 @@
                                 VOLTAGE_INT.classList.add('hdContent01')  ;
                                 VOLTAGE_HBM.classList.add('hdContent01')  ;
                                 CHIPTEMP.classList.add('hdContent01');
+                                LIMITED_TEMP.classList.add('hdContent01');
                                 j = 1;
                              }
                              else
@@ -125,7 +139,8 @@
                                 VOLTAGE_INT.classList.add('hdContent02')  ;
                                  VOLTAGE_HBM.classList.add('hdContent02')  ;
 
-                                CHIPTEMP.classList.add('hdContent02');                 
+                                CHIPTEMP.classList.add('hdContent02');
+                                LIMITED_TEMP.classList.add('hdContent02');                 
                                 j = 0;
                              }
                            }
@@ -152,32 +167,54 @@
         });        
     }
 
+    function temp_update_change_method(inputValue)
+    {
+        if (inputValue.value == 3)
+        {
+        $("#title_td_temp_LABLE").text(" Maximum temperature for shutdown FPGAs in (°C) (60 - 95°C)");
+         }
+        else if(inputValue.value == 0)
+        {
+            $("#title_td_temp_LABLE").text(" Maximum temperature for shutdown FPGA0 in (°C) (60 - 95°C)");
+         }
+
+        else if(inputValue.value == 1)
+        {
+            $("#title_td_temp_LABLE").text(" Maximum temperature for shutdown FPGA1 in (°C) (60 - 95°C)");
+         }
+
+        else if(inputValue.value == 2)
+        {
+            $("#title_td_temp_LABLE").text(" Maximum temperature for shutdown FPGA2 in (°C) (60 - 95°C)");
+         }
+    }
+
+
     function update_change_method(inputValue)
     {
         if (inputValue.value == 3)
         {
-        $("#title_td_vccInt_LABLE").text(" vccInt for all FPGAs in mV (600mV - 950mV");
-        $("#title_td_vccHBM_LABLE").text(" vccHBM for all FPGAs in mV (1000mV - 1300mV");  
+        $("#title_td_vccInt_LABLE").text(" vccInt for  FPGAs in mV (600mV - 950mV)");
+        $("#title_td_vccHBM_LABLE").text(" vccHBM for  FPGAs in mV (1000mV - 1300mV)");  
         }
         else if(inputValue.value == 0)
         {
-            $("#title_td_vccInt_LABLE").text(" vccInt for FPGA0 in mV (600mV - 950mV");
-            $("#title_td_vccHBM_LABLE").text(" vccHBM for FPGA0 in mV (1000mV - 1300mV"); 
+            $("#title_td_vccInt_LABLE").text(" vccInt for FPGA0 in mV (600mV - 950mV)");
+            $("#title_td_vccHBM_LABLE").text(" vccHBM for FPGA0 in mV (1000mV - 1300mV)"); 
         }
 
         else if(inputValue.value == 1)
         {
-            $("#title_td_vccInt_LABLE").text(" vccInt for FPGA1 in mV (600mV - 950mV");
-            $("#title_td_vccHBM_LABLE").text(" vccHBM for FPGA1 in mV (1000mV - 1300mV");             
+            $("#title_td_vccInt_LABLE").text(" vccInt for FPGA1 in mV (600mV - 950mV)");
+            $("#title_td_vccHBM_LABLE").text(" vccHBM for FPGA1 in mV (1000mV - 1300mV)");             
         }
 
         else if(inputValue.value == 2)
         {
-            $("#title_td_vccInt_LABLE").text(" vccInt for FPGA2 in mV (600mV - 950mV");
-            $("#title_td_vccHBM_LABLE").text(" vccHBM for FPGA2 in mV (1000mV - 1300mV");           
+            $("#title_td_vccInt_LABLE").text(" vccInt for FPGA2 in mV (600mV - 950mV)");
+            $("#title_td_vccHBM_LABLE").text(" vccHBM for FPGA2 in mV (1000mV - 1300mV)");           
         }
     }
-
 
     function set_voltage()
     {
@@ -235,8 +272,8 @@
                     }
                     else
                     {
-                        alert("Please check your Box's IP address  \n");
-                        document.getElementById("show_infor_mation").style.display = none;
+                       // alert("Please check your Box's IP address  \n");
+                       // document.getElementById("show_infor_mation").style.display = none;
                     }
                     
 
@@ -251,6 +288,112 @@
         });        
     }
 
+
+    function set_temp()
+    {
+
+        var maxtemp = document.getElementById("id_temp").value ;
+
+        if (maxtemp > 95 || maxtemp < 60)
+        {
+            alert("Invalid input from 60 to 90");
+            return;
+        }
+        $.ajax(
+        {
+            type: "POST",
+            url: "/cgi-bin/qcmap_web_cgi.cgi",
+            data:
+            {
+                Page: "setDracaenatemp",
+                tempMax: maxtemp,
+                board_id: document.getElementById("id_board_id_temp").value,
+                token: "0",
+
+            },
+            dataType: "text",
+            success: function(msgs)
+            {   
+
+                if(msgs.length > 0)
+                {  
+                    obj = jQuery.parseJSON(msgs);
+                    if (obj.result == "SUCCESS")
+                    {   
+                        alert("Config success; your FPGA will syn the new temp about 20 seconds");
+                        loadpage("dashboard.html");
+
+                    }
+                    else
+                    {
+                       // alert("Please check your Box's IP address  \n");
+                       // document.getElementById("show_infor_mation").style.display = none;
+                    }
+                    
+
+                }
+                else
+                    alert("No Reply from server.");
+            },
+            error: function(xhr, textStatus, errorThrown)
+            {
+                //alert("fail")
+            }
+        });        
+    }
+ 
+
+    function set_offset()
+    {
+         
+        var offset = document.getElementById("id_board_offset").value ;
+
+        if (offset != "0x4e" && offset != "0x4d")
+        {
+            alert ("Please check offset address");
+            return;
+        }
+        $.ajax(
+        {
+            type: "POST",
+            url: "/cgi-bin/qcmap_web_cgi.cgi",
+            data:
+            {
+                Page: "setDracaenaoffset234234",
+                offset: offset,
+                token: "0",
+
+            },
+            dataType: "text",
+            success: function(msgs)
+            {   
+
+                if(msgs.length > 0)
+                {  
+                    obj = jQuery.parseJSON(msgs);
+                    if (obj.result == "SUCCESS")
+                    {   
+                        alert("Config success");
+                        loadpage("dashboard.html");
+
+                    }
+                    else
+                    {
+                       // alert("Please check your Box's IP address  \n");
+                       // document.getElementById("show_infor_mation").style.display = none;
+                    }
+                    
+
+                }
+                else
+                    alert("No Reply from server.");
+            },
+            error: function(xhr, textStatus, errorThrown)
+            {
+                //alert("fail")
+            }
+        });        
+    }
         </script>
                 <style type="text/css">
                 div.inline {
@@ -300,7 +443,8 @@
             <td class="hd" align="center" >vccInt (mV)</td>  
             <td class="hd" align="center" >vccHBM(mV)</td>          
             <td class="hd" align="center">Board Temperature (°C)</td>                           
-            <td class="hd" align="center">Chip Temperature (°C)</td>                    
+            <td class="hd" align="center">Chip Temperature (°C)</td>  
+            <td class="hd" align="center">Maximum Temperature (°C)</td>                     
         </tr>  
         <tr class="space"> 
         </tr>
@@ -333,7 +477,7 @@
 </table>
 
 
-<table><tr  ><td class="h1">Voltage setting (vccInt & vccHBM)</td></tr></table  >
+<table><tr  ><td class="h1">Voltage settings (vccInt & vccHBM)</td></tr></table  >
 
 <table  cellpadding="10px">
 <td class="Td_Name" style="width:250px;">Select FPGA</td> 
@@ -363,14 +507,59 @@
 </tr>     
 </table>
 
- 
-<br><br>
 <center>
 <input type="button" value="Change Voltage" onclick="set_voltage()">
 </center>
 
  
+<br><br>
 
+
+<table><tr  ><td class="h1">Maximum  temperature settings</td></tr></table  >
+<table  cellpadding="10px">
+<td class="Td_Name" style="width:250px;">Select FPGA</td> 
+<td width="90px" align="center">:</td>         
+<td class="Td_Value"> 
+                <select  id="id_board_id_temp"  onchange="temp_update_change_method(this)">
+                    <option value="3" selected="selected">All FPGA(s)</option>
+                    <option value="0">FPGA0</option>
+                    <option value="1">FPGA1</option>
+                    <option value="2">FPGA2</option>
+                </select>
+ 
+</td>
+<tr>
+    <td class="Td_Name" style="width:350px;" id="title_td_temp"><label   id="title_td_temp_LABLE"> </label></td> 
+    <td width="90px" align="center">:</td> 
+    <td class="Td_Value"><input type="text" id="id_temp" ></td>   
+</tr>      
+     
+</table>
+<center>
+<input type="button" value="Apply Temperature" onclick="set_temp()">
+</center>
+
+
+
+<br><br>
+
+<table><tr  ><td class="h1">Temperature sensor I2C address</td></tr></table  >
+<table  cellpadding="10px">
+<td class="Td_Name" style="width:250px;">I2C address</td> 
+<td width="90px" align="center">:</td>         
+<td class="Td_Value"> 
+                <select  id="id_board_offset" >
+                    <option value="0x4d" selected="selected">0x4D</option>
+                    <option value="0x4e">0x4E</option>
+                </select>
+</td>
+ 
+</tr>      
+     
+</table>
+<center>
+<input type="button" value="Change Address" onclick="set_offset()">
+</center>
 
 
 

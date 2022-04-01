@@ -742,17 +742,22 @@ int main(void)
 
 				else if (strstr(html_cgi_buff, "setDracaenaResetFPGA"))
 				{
-					 free((void *)html_cgi_buff);
+					free((void *)html_cgi_buff);
 				    memset(responce, 0, sizeof(responce));
 				    strcpy(responce, "curl --header \"Content-Type: application/json\" --request POST --data \'{\"voltage_vccint\":850,\"voltage_hbm\":1265,\"boardId\":3}\' http://localhost:8200/controller/setVoltage");
 
-				    //printf("\n \n %s \n \n", lineBuffer);
-
-				    //system(lineBuffer);
-
 				    FILE *p_fHandle = NULL;
-				   // p_fHandle = popen("curl --header \"Content-Type: application/json\" --request GET http://192.168.1.16:8200/controller/getVoltage", "r");
-				    // curl --header "Content-Type: application/json" --request GET http://192.168.1.16:8200/controller/getTemperature
+				    p_fHandle = popen(responce, "r");
+				    if (p_fHandle != NULL)
+				    {
+				        pclose(p_fHandle);
+				    }
+
+
+				    memset(responce, 0, sizeof(responce));
+				    strcpy(responce, "curl --header \"Content-Type: application/json\" --request GET http://localhost:8200/controller/resetFactoryFpga");
+
+				    p_fHandle = NULL;
 				    p_fHandle = popen(responce, "r");
 				    if (p_fHandle != NULL)
 				    {
@@ -760,6 +765,7 @@ int main(void)
 				    }
 
 					memset(responce, 0, sizeof(responce));
+
 					strcpy(responce,"{\"page\":\"setDracaenaResetFPGA\", \"result\":\"SUCCESS\"}");	
 				    printf("%s%d\n\n", HTTP_RESPONCE_HEADER,strlen(responce));
 				    printf("%s", responce);
@@ -830,6 +836,127 @@ int main(void)
 						
 				}
 
+				else if (strstr(html_cgi_buff, "setDracaenatemp" ))
+				{
+ 
+                    char lineBuffer[512];
+                    char boardId[2];
+                    char tempMax[50];
+
+					memset(responce, 0, sizeof(responce));
+
+
+					//get vcc hbm
+					sub = NULL;
+					sub = strstr(html_cgi_buff, "tempMax=");
+					sub = sub+8;
+
+					for (int i = 0; i < sizeof(tempMax); i++)
+					{   
+					    if ( sub[0] == '&')
+					    {
+					        break;
+					    }
+					    tempMax[i]= sub[0];
+					    sub = sub + 1;
+					}
+
+					//get boardID
+					sub = NULL;
+					sub = strstr(html_cgi_buff, "board_id=");
+					sub = sub+9;
+
+					for (int i = 0; i < sizeof(boardId); i++)
+					{   
+					    if ( sub[0] == '&')
+					    {
+					        break;
+					    }
+					    boardId[i]= sub[0];
+					    sub = sub + 1;
+					}
+
+                    
+                    free((void *)html_cgi_buff);
+				
+				    memset(responce, 0, sizeof(responce));
+
+				    sprintf(responce, "curl --header \"Content-Type: application/json\" --request POST --data \'{\"tempMax\":%s,\"boardId\":%s}\' http://localhost:8200/controller/setTempMax",tempMax,boardId);
+
+
+				    FILE *p_fHandle = NULL;
+				    p_fHandle = popen(responce, "r");
+				    if (p_fHandle != NULL)
+				    {
+				        memset(responce, 0, sizeof responce);
+				        fread(responce, 1, sizeof responce, p_fHandle);
+				        pclose(p_fHandle);
+				    }
+
+					memset(responce, 0, sizeof(responce));
+					strcpy(responce,"{\"page\":\"setDracaenatemp\", \"result\":\"SUCCESS\", \"status\":\"SUCCESS\"}");	
+				    printf("%s%d\n\n", HTTP_RESPONCE_HEADER,strlen(responce));
+				    printf("%s", responce);
+				    return SUCCESS;	
+
+
+				}
+
+				else if (strstr(html_cgi_buff, "setDracaenaoffset234234" ))
+				{
+ 
+                    char lineBuffer[512];
+                    char boardId[2];
+                    char offset[5];
+
+					memset(responce, 0, sizeof(responce));
+
+
+					//get vcc hbm
+					sub = NULL;
+					sub = strstr(html_cgi_buff, "offset=");
+					sub = sub+7;
+
+					for (int i = 0; i < sizeof(offset); i++)
+					{   
+					    if ( sub[0] == '&')
+					    {
+					        break;
+					    }
+					    offset[i]= sub[0];
+					    sub = sub + 1;
+					}
+
+                    
+                    free((void *)html_cgi_buff);
+				
+				    memset(responce, 0, sizeof(responce));
+
+/*				    sprintf(lineBuffer, "curl --header \"Content-Type: application/json\" --request POST --data \'{\"offset\":%s,\"boardId\":%s}\' http://localhost:8200/controller/setTempMax",offset,boardId);
+				    curl --header "Content-Type: application/json" --request POST --data '{"temp_i2c_addr":"0x40"}' http://localhost:8200/controller/setI2CAddress*/
+
+				    sprintf(responce,"curl --header \"Content-Type: application/json\" --request POST --data '{\"temp_i2c_addr\":\"%s\",\"boardId\":3}' http://localhost:8200/controller/setI2CAddress", offset);
+
+
+				    FILE *p_fHandle = NULL;
+				    p_fHandle = popen(responce, "r");
+				    if (p_fHandle != NULL)
+				    {
+				        memset(responce, 0, sizeof responce);
+				        fread(responce, 1, sizeof responce, p_fHandle);
+				        pclose(p_fHandle);
+				    }
+
+				    memset(responce, 0, sizeof(responce));
+					memset(responce, 0, sizeof(responce));
+					strcpy(responce,"{\"page\":\"setDracaenaoffset\", \"result\":\"SUCCESS\", \"status\":\"SUCCESS\"}");	
+				    printf("%s%d\n\n", HTTP_RESPONCE_HEADER,strlen(responce));
+				    printf("%s", responce);
+				    return SUCCESS;	
+
+
+				}
+
 				else if (strstr(html_cgi_buff, "setDracaenaSetvoltage" ))
 				{
  
@@ -838,15 +965,7 @@ int main(void)
                     char boardId[2];
                     char voltage_hbm[50];
 
-					//memset(newip, 0, sizeof(newip));
-					//memset(oldip, 0, sizeof(oldip));
 					memset(responce, 0, sizeof(responce));
-
-					//get IP
-
-/*					sub = strstr(html_cgi_buff, "ip_address=");
-					sub = sub + 11;
-					strcpy(newip, sub);*/
 
 					//get vccint
 
@@ -895,45 +1014,15 @@ int main(void)
 					    sub = sub + 1;
 					}
 
-
-/*					sprintf(lineBuffer, "echo \"voltage_vccint=|%s|  voltage_hbm=|%s|    boardId=|%s|   \" > /tmp/stringinpu", voltage_vccint, voltage_hbm,   boardId);
-					system(lineBuffer);*/
                     
                     free((void *)html_cgi_buff);
-
-/*					if (!is_ipv4_address_valid(newip))
-					{
-						memset(responce, 0, sizeof(responce));
-						strcpy(responce,"{\"page\":\"setDracaenaSetvoltage\", \"result\":\"FAIL\", \"status\":\"invalid\"}");	
-					    printf("%s%d\n\n", HTTP_RESPONCE_HEADER,strlen(responce));
-					    printf("%s", responce);
-					    return SUCCESS;	
-					}
-
-
-					//get_box_ipp(oldip);
-
-					if (strcmp(oldip, newip) !=0)
-					{
-						//need to update new IP
-						write_save_ip(newip);
-					}*/
-
-					//get voltage 
-
-					
+				
 				    memset(lineBuffer, 0, sizeof(lineBuffer));
 
 				    sprintf(lineBuffer, "curl --header \"Content-Type: application/json\" --request POST --data \'{\"voltage_vccint\":%s,\"voltage_hbm\":%s,\"boardId\":%s}\' http://localhost:8200/controller/setVoltage",voltage_vccint,voltage_hbm,boardId);
 
 
-				    //printf("\n \n %s \n \n", lineBuffer);
-
-				    //system(lineBuffer);
-
 				    FILE *p_fHandle = NULL;
-				   // p_fHandle = popen("curl --header \"Content-Type: application/json\" --request GET http://192.168.1.16:8200/controller/getVoltage", "r");
-				    // curl --header "Content-Type: application/json" --request GET http://192.168.1.16:8200/controller/getTemperature
 				    p_fHandle = popen(lineBuffer, "r");
 				    if (p_fHandle != NULL)
 				    {
