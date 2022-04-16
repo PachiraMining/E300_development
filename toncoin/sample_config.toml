@@ -1,0 +1,16 @@
+# require devices to be explicitly configured (true/false)
+    fpga-xvc = [
+    { package = "E300", url = "192.168.2.136:2541" },
+    { package = "E300", url = "192.168.2.136:2542" },
+    { package = "E300", url = "192.168.2.136:2543" },
+    ]   
+    whitelist-devices = false
+
+    # disable all fpga device functionality (true/false)
+    disable-fpga = false
+
+    # default settings for all fpga devices
+    [fpga.default]
+    algorithm = "toncoin"
+    clock = 700
+    wallet = "EQCF5OwWZUhpSFNGwJO0xa1G_jV9Jwqo6zajyJSvUpD5eN1_"
