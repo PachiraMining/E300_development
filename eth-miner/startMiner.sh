@@ -23,7 +23,7 @@ phase=1
 
 while true; do
 			sudo killall ethminer
-			sudo  ./ethminer --fpga -a 510 -b 312 -c 125 -q 110 -e $phase -f -d $maxtemp $pool --ip $ipaddress
+			sudo  ./ethminer --fpga -a 510 -b 312 -c 125 -q 100 -e $phase -f -d $maxtemp $pool --ip $ipaddress
 			echo "Restarting the miner in $timeretry seconds..."
 			sleep 10
 done
