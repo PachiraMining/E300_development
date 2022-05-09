@@ -33,7 +33,7 @@ Enable cgi mode
 Login with your E300 Box IP's address 
 
 Example : http://192.168.2.127/
-Default username/password: root/123456890
+Default username/password: root/password
 ![Test Image 1](mdimage/login.png)
 
 
