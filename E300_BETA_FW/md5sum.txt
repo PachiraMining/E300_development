@@ -1,3 +1,1 @@
-md5sum : 6698588b9434cd30856c370c6a67ec4b  E300_BETA_FW/zynq_firmware.tar
-firmware version: v.1.0.14
-
+e652878a36328de821900b20100b1a23  E300_BETA_FW/zynq_firmware.tar
