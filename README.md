@@ -100,15 +100,6 @@ Commandline:
 Description: get fans information
 
 
-API: getEmailConfig
-
-Commandline:
-
-	curl --header "Content-Type: application/json" --request GET http://192.168.5.3:8200/controller/getEmailConfig
- 
-Description: get notification settings
-
-
 # 2. Firmware on zynq board
 - Sample projects to use communication features between zynq board and FPGA via I2C, UART, jtag,... to read temperature, voltage, load bitstream,...
 # 3. hardware
