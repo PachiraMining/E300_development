@@ -1,9 +1,73 @@
 # E300_development
 This is the development document for the E300 device
 
-# 1. ETH-Miner
-- Instructions to download and load bitstream from PC via local network using vivado
-- how to run miner program on pc
+# 1. API List
+API: getMiningSatus
+Commandline:
+	curl --header "Content-Type: application/json" --request GET http://localhost:8200/controller/getMiningSatus
+Description: getMiningSatus returns mining status
+
+
+API: setMiningAction
+Commandline:
+	curl --header "Content-Type: application/json" --request POST --data '{"action":1}' http://localhost:8200/controller/runMiningAction"
+Description: setMiningAction supports Start/Stop mining ("action":1 => start mining ; "action":0 => Stop mining)
+
+API: setVoltage
+Commandline:
+	curl --header "Content-Type: application/json" --request POST --data '{"voltage_vccint":600,"voltage_hbm":1050,"boardId":3}' http://localhost:8200/controller/setVoltage
+Description: setVoltage supports setVccInt, vccHBM. 
+			 boardId: 0 => set FPGA0 only
+			 boardId: 1 => set FPGA1 only
+			 boardId: 2 => set FPGA2 only
+			 boardId: 3 => set ALL FPGAs.
+
+API: setTempMax 
+Commandline: 
+	curl --header "Content-Type: application/json" --request POST --data '{"tempMax":70,"boardId":0}' http://localhost:8200/controller/setTempMax
+Description: setTempMax supports set maximum temperaturer of FPGA
+ 			 boardId: 0 => set FPGA0 only
+			 boardId: 1 => set FPGA1 only
+			 boardId: 2 => set FPGA2 only
+			 boardId: 3 => set ALL FPGAs.
+
+API: getAllInfo
+Commandline:
+	curl --header "Content-Type: application/json" --request GET http://localhost:8200/controller/getAllInfo
+Description: Get ALL information relating to FPGA configuration
+
+
+API: setOtaUpdate
+Commandline:
+	curl --header "Content-Type: application/json" --request POST --data {"otaUpdateEnable":1} http://10.10.10.139:8500/firmware/setOtaUpdate
+Description: Enable/Disable OTA update
+
+
+API: getOtaUpdate
+Commandline:
+ 	curl --header "Content-Type: application/json" --request GET http://localhost:8500/firmware/getOtaUpdate
+Description: Get firmware version and OTA status
+
+ 
+API: setFanMode
+Commandline:
+	curl --header "Content-Type: application/json" --request POST --data '{"fan_mode":1,"fan_level":10}' http://localhost:8200/controller/setFansMode
+Description: API supports set fans configuration 
+			 fan_mode : 0 -> auto mode (you may ignore fan_level)
+			 fan_mode : 1 -> manual mode, you need to set fan_level (fan_level ranges from 1 to 10)
+
+
+API: getAllFanInfo
+Commandline:
+	curl --header "Content-Type: application/json" --request GET http://localhost:8200/controller/getAllFanInfo
+Description: get fans information
+
+
+API: getEmailConfig
+Commandline:
+	curl --header "Content-Type: application/json" --request GET http://localhost:8200/controller/getEmailConfig
+Description: get notification settings
+
 
 # 2. Firmware on zynq board
 - Sample projects to use communication features between zynq board and FPGA via I2C, UART, jtag,... to read temperature, voltage, load bitstream,...
