@@ -6,7 +6,7 @@ API: getMiningSatus
 
 Commandline:
 
-	curl --header "Content-Type: application/json" --request GET http://localhost:8200/controller/getMiningSatus
+	curl --header "Content-Type: application/json" --request GET http://192.168.5.3:8200/controller/getMiningSatus
  
 Description: getMiningSatus returns mining status
 
@@ -15,7 +15,7 @@ API: setMiningAction
 
 Commandline:
 
-	curl --header "Content-Type: application/json" --request POST --data '{"action":1}' http://localhost:8200/controller/runMiningAction"
+	curl --header "Content-Type: application/json" --request POST --data '{"action":1}' http://192.168.5.3:8200/controller/runMiningAction"
  
 Description: setMiningAction supports Start/Stop mining ("action":1 => start mining ; "action":0 => Stop mining)
 
@@ -23,7 +23,7 @@ API: setVoltage
 
 Commandline:
 
-	curl --header "Content-Type: application/json" --request POST --data '{"voltage_vccint":600,"voltage_hbm":1050,"boardId":3}' http://localhost:8200/controller/setVoltage
+	curl --header "Content-Type: application/json" --request POST --data '{"voltage_vccint":600,"voltage_hbm":1050,"boardId":3}' http://192.168.5.3:8200/controller/setVoltage
  
 Description: setVoltage supports setVccInt, vccHBM. 
 
@@ -39,7 +39,7 @@ API: setTempMax
 
 Commandline: 
 
-	curl --header "Content-Type: application/json" --request POST --data '{"tempMax":70,"boardId":0}' http://localhost:8200/controller/setTempMax
+	curl --header "Content-Type: application/json" --request POST --data '{"tempMax":70,"boardId":0}' http://192.168.5.3:8200/controller/setTempMax
  
 Description: setTempMax supports set maximum temperaturer of FPGA
 
@@ -55,7 +55,7 @@ API: getAllInfo
 
 Commandline:
 
-	curl --header "Content-Type: application/json" --request GET http://localhost:8200/controller/getAllInfo
+	curl --header "Content-Type: application/json" --request GET http://192.168.5.3:8200/controller/getAllInfo
  
 Description: Get ALL information relating to FPGA configuration
 
@@ -64,7 +64,7 @@ API: setOtaUpdate
 
 Commandline:
 
-	curl --header "Content-Type: application/json" --request POST --data {"otaUpdateEnable":1} http://10.10.10.139:8500/firmware/setOtaUpdate
+	curl --header "Content-Type: application/json" --request POST --data {"otaUpdateEnable":1} http://192.168.5.3:8500/firmware/setOtaUpdate
  
 Description: Enable/Disable OTA update
 
@@ -73,7 +73,7 @@ API: getOtaUpdate
 
 Commandline:
 
- 	curl --header "Content-Type: application/json" --request GET http://localhost:8500/firmware/getOtaUpdate
+ 	curl --header "Content-Type: application/json" --request GET http://192.168.5.3:8500/firmware/getOtaUpdate
   
 Description: Get firmware version and OTA status
 
@@ -82,7 +82,7 @@ API: setFanMode
 
 Commandline:
 
-	curl --header "Content-Type: application/json" --request POST --data '{"fan_mode":1,"fan_level":10}' http://localhost:8200/controller/setFansMode
+	curl --header "Content-Type: application/json" --request POST --data '{"fan_mode":1,"fan_level":10}' http://192.168.5.3:8200/controller/setFansMode
  
 Description: API supports set fans configuration 
 
@@ -95,7 +95,7 @@ API: getAllFanInfo
 
 Commandline:
 
-	curl --header "Content-Type: application/json" --request GET http://localhost:8200/controller/getAllFanInfo
+	curl --header "Content-Type: application/json" --request GET http://192.168.5.3:8200/controller/getAllFanInfo
  
 Description: get fans information
 
@@ -104,7 +104,7 @@ API: getEmailConfig
 
 Commandline:
 
-	curl --header "Content-Type: application/json" --request GET http://localhost:8200/controller/getEmailConfig
+	curl --header "Content-Type: application/json" --request GET http://192.168.5.3:8200/controller/getEmailConfig
  
 Description: get notification settings
 
