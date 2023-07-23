@@ -106,6 +106,7 @@ Commandline:
 	curl --header "Content-Type: application/json" --request POST --data '{"ratio":15,"boardId":3}' http://192.168.5.3:8200/controller/setJtagClock
  
 Description: change Jtag clock
+
  			 boardId: 0 => set FPGA0 only
      
 			 boardId: 1 => set FPGA1 only
@@ -114,8 +115,9 @@ Description: change Jtag clock
     
 			 boardId: 3 => set ALL FPGAs.
 
-    			ratio from 1 to 15
-       			Jtag_clock = 100 / ratio
+    			 ratio ranges 1 to 15
+	
+       			 Jtag_clock = 100 / ratio
 
 
 # 2. Firmware on zynq board
