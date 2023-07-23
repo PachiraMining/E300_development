@@ -118,6 +118,7 @@ Description: change Jtag clock
     			 ratio ranges 1 to 15
 	
        			 Jtag_clock = 100 / ratio
+	   		(VU13P boards should set ratio = 10 before running kylacoin)
 
 
 # 2. Firmware on zynq board
