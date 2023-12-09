@@ -133,6 +133,7 @@ Response result
 , "result":"SUCCESS"}
 
 Explain result:
+
 "status" : Status of developer
 	 - 1: Running TheAllFather bitstream
 	 - 2: Running Teamredminer bitstream
