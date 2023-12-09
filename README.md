@@ -121,6 +121,51 @@ Description: change Jtag clock
 	   		(VU13P boards should set ratio = 10 before running kylacoin)
 
 
+API: getDracaMinerStatus
+
+Commandline:
+curl -X POST -d 'Page=getDracaMinerStatus' -H 'Content-Type: application/x-www-form-urlencoded' http://192.168.88.16/cgi-bin/qcmap_web_cgi.cgi
+
+Response result
+
+{"Page":"getDracaMinerStatus", "status":"4", "developer":"wf", "enabled":"1", "info": {"running_mode":"0","a":"radiant", "o":"stratum+tcp://usse.vipor.net:5067", "u":"12XfbWYep8zKj9RdmfRiwL3fu3PRvNRdfe", "miner":"vu33box110", "fpga_clk_core":"450"}
+, "result":"SUCCESS"}
+
+Explain result:
+"status" : Status of developer
+	 - 1: Running TheAllFather bitstream
+	 - 2: Running Teamredminer bitstream
+	 - 3: Running K1 Lab bitstream
+	 - 4: Running WhiteFire bitstream
+	 - 0: Stopped
+
+"developer" : developer name
+     - wf : WhiteFire
+     - aft : TheAllFather
+     - k1  : k1 Lab
+     - trm : Teamredminer
+
+"enabled" :
+ 	 0 - disabled auto start mining
+ 	 1 - enabled auto start mining
+
+""info": mining info
+
+     running_mode : running mode 
+        0 - menu running_mode
+        1 - command line running_mode
+
+     a  : algorithm
+     	radiant 
+     	kylacoin 
+     	etchash
+     	ironfish
+     	kas
+
+     u : wallet address
+     miner : workerID
+     fpga_clk_core: mINING CLOCK
+
 # 2. Firmware on zynq board
 - Sample projects to use communication features between zynq board and FPGA via I2C, UART, jtag,... to read temperature, voltage, load bitstream,...
 # 3. hardware
