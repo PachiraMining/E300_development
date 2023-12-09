@@ -124,7 +124,8 @@ Description: change Jtag clock
 API: getDracaMinerStatus
 
 Commandline:
-curl -X POST -d 'Page=getDracaMinerStatus' -H 'Content-Type: application/x-www-form-urlencoded' http://192.168.88.16/cgi-bin/qcmap_web_cgi.cgi
+
+	curl -X POST -d 'Page=getDracaMinerStatus' -H 'Content-Type: application/x-www-form-urlencoded' http://192.168.5.3/cgi-bin/qcmap_web_cgi.cgi
 
 Response result
 
