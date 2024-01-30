@@ -2,7 +2,7 @@
 
 Pool="stratum%%2Btcp://usse.vipor.net:5067"
 Wallet="12XfbWYep8zKj9RdmfRiwL3fu3PRvNRdfe"
-WorkerIDPrefix="E300" #WorkerID = WorkerIDPrefix_lastnumber of workerID
+WorkerIDPrefix="E300" #WorkerID = WorkerIDPrefix + lastnumber of your E300 ip addresses
 Clock="500"
 
 # Check if the file doesn't exist
