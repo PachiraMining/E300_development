@@ -11,7 +11,7 @@ Step 3: Update your E300 ip address into ip_list.txt
 
 - If you want to mine Radiant for all Boxes in in_list.txt: change Wallet, Pool, Clock at  runRadiant.sh then run:<pre> sudo ./runRadiant.sh </pre>
 
-- If you don't want to stop mining: <pre> sudo ./stopMining.sh </pre>
+- If you don't want to mine and stop mining: <pre> sudo ./stopMining.sh </pre>
 
 
 Thanks for reading, FlyingPanda loves you 10 tons!
